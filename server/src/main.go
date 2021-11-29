@@ -9,4 +9,5 @@ func main() {
 	clientConnection := core.ConnectionWithClient(listener)
 	defer clientConnection.Close()
 	core.WriteDataToClient(clientConnection)
+	core.MainLoop()
 }

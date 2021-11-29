@@ -2,10 +2,12 @@
 package core
 
 import (
+	"bufio"
 	"encoding/gob"
 	"fmt"
 	"log"
 	"net"
+	"os"
 )
 
 type Data struct {
@@ -48,8 +50,24 @@ func WriteDataToClient(connectionClient net.Conn) {
 }
 
 // Boucle principal du programme
-func mainLoop() {
+func MainLoop() {
 	loopControl := true
 	for loopControl {
+		userOptionInput, err := retrieveChoiceOption()
+		if err != nil {
+			continue
+		}
+		fmt.Println(userOptionInput)
 	}
+}
+
+// Permet de récupérer le choix de l'utilisateur
+func retrieveChoiceOption() (userOptionInput string, err error) {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("[+] Enter Options")
+	userOptionInput, err = reader.ReadString('\n')
+	if err != nil {
+		fmt.Println(err)
+	}
+	return userOptionInput, err
 }
