@@ -2,12 +2,17 @@
 package core
 
 import (
-	"bufio"
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net"
-	"os"
 )
+
+type Data struct {
+	Name string
+	Id   int
+	Age  float32
+}
 
 // Permet de lancer le serveur
 func Listening(ip string, port string) net.Listener {
@@ -32,11 +37,19 @@ func ConnectionWithClient(listener net.Listener) net.Conn {
 
 // Permet d'écrire des données au client
 func WriteDataToClient(connectionClient net.Conn) {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print(">> ")
-	dataToSend, err := reader.ReadString('\n')
+	data := &Data{Name: "Amolixs", Id: 50, Age: 52.3}
+	encoder := gob.NewEncoder(connectionClient)
+	err := encoder.Encode(data)
 	if err != nil {
 		log.Fatal(err)
+	} else {
+		fmt.Println("[+] Données envoyées au client")
 	}
-	connectionClient.Write([]byte(dataToSend))
+}
+
+// Boucle principal du programme
+func mainLoop() {
+	loopControl := true
+	for loopControl {
+	}
 }
