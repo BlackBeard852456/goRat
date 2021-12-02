@@ -17,6 +17,11 @@ type Data struct {
 	Age  float32
 }
 
+type Command struct {
+	cmdOutput string
+	cmdError  string
+}
+
 // Permet de lancer le serveur
 func Listening(ip string, port string) net.Listener {
 	listenAddress := fmt.Sprintf("%s:%s", ip, port)
@@ -66,7 +71,6 @@ func MainLoop(connectionClient net.Conn) {
 			continue
 		}
 		manageChoiceOption(userOptionInput, connectionClient, &loopControl)
-		connectionClient.Write([]byte(userOptionInput))
 	}
 }
 
@@ -87,6 +91,7 @@ func manageChoiceOption(userOptionInput string, connectionClient net.Conn, loopC
 	switch userOptionInput {
 	case "1":
 		fmt.Println("[+] Command Execution Program")
+		executeCommandRemotly(connectionClient)
 	case "99":
 		fmt.Println("[-] Exiting programm")
 		*loopControl = false
@@ -97,5 +102,12 @@ func manageChoiceOption(userOptionInput string, connectionClient net.Conn, loopC
 
 // Permet d'éxecuter une commande à distance du client
 func executeCommandRemotly(connectionClient net.Conn) (err error) {
-	return err
+	reader := bufio.NewReader(os.Stdin)
+	commandLoop := true
+	for commandLoop {
+		fmt.Print(">> ")
+		commandInput, _ := reader.ReadString('\n')
+		connectionClient.Write([]byte(commandInput))
+	}
+	return
 }

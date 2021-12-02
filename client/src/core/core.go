@@ -2,16 +2,23 @@
 package core
 
 import (
+	"bufio"
 	"encoding/gob"
 	"fmt"
 	"log"
 	"net"
+	"strings"
 )
 
 type Data struct {
 	Name string
 	Id   int
 	Age  float32
+}
+
+type Command struct {
+	cmdOutput string
+	cmdError  string
 }
 
 func ConnectionWithServer(ipServer string, portServer string) net.Conn {
@@ -36,5 +43,20 @@ func ReceiveDataOfServer(connectionServer net.Conn) {
 	} else {
 		fmt.Println("[+] Donnée envoyé par le serveur bien recus !")
 		fmt.Println(data.Name)
+	}
+}
+
+func ExecuteCommand(connectionServer net.Conn) {
+	reader := bufio.NewReader(connectionServer)
+	commandLoop := true
+	for commandLoop {
+		command, err := reader.ReadString('\n')
+		command = strings.TrimSuffix(command, "\n")
+		if err != nil {
+			fmt.Println(err)
+		}
+		if command == "stop" {
+			commandLoop = false
+		}
 	}
 }
