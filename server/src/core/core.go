@@ -8,6 +8,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"strings"
 )
 
 type Data struct {
@@ -50,14 +51,15 @@ func WriteDataToClient(connectionClient net.Conn) {
 }
 
 // Boucle principal du programme
-func MainLoop() {
+func MainLoop(connectionClient net.Conn) {
 	loopControl := true
 	for loopControl {
 		userOptionInput, err := retrieveChoiceOption()
 		if err != nil {
 			continue
 		}
-		fmt.Println(userOptionInput)
+		manageChoiceOption(userOptionInput)
+		connectionClient.Write([]byte(userOptionInput))
 	}
 }
 
@@ -69,5 +71,16 @@ func retrieveChoiceOption() (userOptionInput string, err error) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	userOptionInput = strings.TrimSuffix(userOptionInput, "\n")
 	return userOptionInput, err
+}
+
+// Gère la gestion du choix de l'option de l'utilisateur
+func manageChoiceOption(userOptionInput string) {
+	switch userOptionInput {
+	case "1":
+		fmt.Println("[+] Command Execution Program")
+	default:
+		fmt.Println("[-] Invalid Option Input !")
+	}
 }

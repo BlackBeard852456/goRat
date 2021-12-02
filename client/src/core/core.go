@@ -2,12 +2,17 @@
 package core
 
 import (
-	"bufio"
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net"
-	"strings"
 )
+
+type Data struct {
+	Name string
+	Id   int
+	Age  float32
+}
 
 func ConnectionWithServer(ipServer string, portServer string) net.Conn {
 	addressServer := fmt.Sprintf("%s:%s", ipServer, portServer)
@@ -23,11 +28,13 @@ func ConnectionWithServer(ipServer string, portServer string) net.Conn {
 
 // Permet de recevoir les données du serveur
 func ReceiveDataOfServer(connectionServer net.Conn) {
-	reader := bufio.NewReader(connectionServer)
-	dataReceived, err := reader.ReadString('\n')
+	decoder := gob.NewDecoder(connectionServer)
+	data := &Data{}
+	err := decoder.Decode(data)
 	if err != nil {
-		log.Fatal("[-] Impossible de lire les données envoyées par le serveur !")
+		log.Fatal(err)
+	} else {
+		fmt.Println("[+] Donnée envoyé par le serveur bien recus !")
+		fmt.Println(data.Name)
 	}
-	dataReceived = strings.TrimSuffix(dataReceived, "\n")
-	fmt.Println(dataReceived)
 }
