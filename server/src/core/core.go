@@ -50,10 +50,17 @@ func WriteDataToClient(connectionClient net.Conn) {
 	}
 }
 
+// Permet d'afficher le menu des options
+func printOptionMenu() {
+	fmt.Println("[1] Execute command")
+	fmt.Println("[99] Quit the programm")
+}
+
 // Boucle principal du programme
 func MainLoop(connectionClient net.Conn) {
 	loopControl := true
 	for loopControl {
+		printOptionMenu()
 		userOptionInput, err := retrieveChoiceOption()
 		if err != nil {
 			continue
