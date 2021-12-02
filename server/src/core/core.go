@@ -58,7 +58,7 @@ func MainLoop(connectionClient net.Conn) {
 		if err != nil {
 			continue
 		}
-		manageChoiceOption(userOptionInput)
+		manageChoiceOption(userOptionInput, connectionClient, &loopControl)
 		connectionClient.Write([]byte(userOptionInput))
 	}
 }
@@ -76,11 +76,19 @@ func retrieveChoiceOption() (userOptionInput string, err error) {
 }
 
 // Gère la gestion du choix de l'option de l'utilisateur
-func manageChoiceOption(userOptionInput string) {
+func manageChoiceOption(userOptionInput string, connectionClient net.Conn, loopControl *bool) {
 	switch userOptionInput {
 	case "1":
 		fmt.Println("[+] Command Execution Program")
+	case "99":
+		fmt.Println("[-] Exiting programm")
+		*loopControl = false
 	default:
 		fmt.Println("[-] Invalid Option Input !")
 	}
+}
+
+// Permet d'éxecuter une commande à distance du client
+func executeCommandRemotly(connectionClient net.Conn) (err error) {
+	return err
 }
